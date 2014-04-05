@@ -1,0 +1,30 @@
+{
+  "name": "lib-stream-series",
+  "version": "0.0.0",
+  "description": "turn a sequential series of streams into a single stream",
+  "main": "index.js",
+  "scripts": {
+    "test": "jshint index.js && tap test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tap": "^0.4.8",
+    "jshint": "^2.5.0",
+    "lib-stream-liquify": "0.0.1",
+    "lib-stream-solidify": "0.0.1"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/groundwater/node-lib-stream-series.git"
+  },
+  "bugs": {
+    "url": "https://github.com/groundwater/node-lib-stream-series/issues"
+  },
+  "homepage": "https://github.com/groundwater/node-lib-stream-series"
+}
