@@ -5,78 +5,49 @@ var util = require('util');
 
 function ReadableSeries(opts) {
   stream.Readable.call(this, opts);
-
-  this._read_wait = -1;
-  this._readable  = null;
-
-  this._readables = [];
-  this._active   = false;
+  this._queue  = [];
+  this._active = null;
 }
 util.inherits(ReadableSeries, stream.Readable);
 
-function pushIfData(into, from, size) {
-  var blob = from.read(size);
+function tryRead(series, readable, size) {
+  var blob = readable.read(size);
 
-  // Filter null blobs, because pushing a null blob means
-  // that the stream is done. This is a weird behavior, but
-  // I imagine there is a rationale behind it.
-  if (blob === null) {
-    from.once('readable', onReadable);
-  } else {
-    into.push(blob);
-  }
-
-  function onReadable() {
-    pushIfData(into, from, size);
-  }
+  if (blob)
+    series.push(blob);
 }
 
-function pipeReadable(series, readable) {
-  var self = series;
-  var size = series._read_wait;
-
-  // propertly end the connection
-  readable.on('end', function () {
-    startNext(series);
-  });
-
-  // TODO: not sure if this needs a guard or not
-  pushIfData(series, readable);
-
-  series._readable = readable;
-}
-
-function startNext(series) {
-  if (series._readables.length === 0) {
-    series._active = false;
+function makeActive(series, readable) {
+  if (readable === null) {
+    return series.push(null);
+  } else if (readable === undefined) {
     return;
   }
+  series._active = readable;
 
-  var next = series._readables.shift();
+  readable.on('readable', tryRead.bind(null, series, readable));
+  readable.on('end', function () {
+    delete series._active;
+    makeActive(series, series._queue.shift());
+  });
 
-  if (next === null) series.push(null);
-  else pipeReadable(series, next);
+  tryRead(series, readable);
 }
 
-ReadableSeries.prototype.addReadable = function (readable) {
-  this._readables.push(readable);
-
-  if (this._active) return;
-  else this._active = true;
-
-  startNext(this);
+ReadableSeries.prototype.done = function () {
+  this.addReadable(null);
 };
 
-ReadableSeries.prototype.done = function () {
-  this._readables.push(null);
+ReadableSeries.prototype.addReadable = function (readable) {
+  if (this._active)
+    this._queue.push(readable);
+  else
+    makeActive(this, readable);
 };
 
 ReadableSeries.prototype._read = function (size) {
-  if (!this._readable) {
-    this._read_wait = size;
-  } else {
-    pushIfData(this, this._readable);
-  }
+  if (this._active)
+    tryRead(this, this._active, size);
 };
 
 module.exports = function (opts) {
