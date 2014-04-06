@@ -21,7 +21,7 @@ function pushIfData(into, from, size) {
   // that the stream is done. This is a weird behavior, but
   // I imagine there is a rationale behind it.
   if (blob === null) {
-    from.on('readable', onReadable);
+    from.once('readable', onReadable);
   } else {
     into.push(blob);
   }
