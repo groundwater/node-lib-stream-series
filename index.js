@@ -40,10 +40,8 @@ function pipeReadable(series, readable) {
     startNext(series);
   });
 
-  // if .read was called before a readable was set,
-  // we need to immediately push some data
-  if (size > -1)
-    pushIfData(series, readable);
+  // TODO: not sure if this needs a guard or not
+  pushIfData(series, readable);
 
   series._readable = readable;
 }
