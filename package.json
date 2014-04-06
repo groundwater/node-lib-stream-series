@@ -1,6 +1,6 @@
 {
   "name": "lib-stream-series",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "turn a sequential series of streams into a single stream",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,7 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/groundwater/node-lib-stream-series.git"
