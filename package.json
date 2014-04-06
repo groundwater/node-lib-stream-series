@@ -1,6 +1,6 @@
 {
   "name": "lib-stream-series",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "turn a sequential series of streams into a single stream",
   "main": "index.js",
   "scripts": {
